@@ -13,7 +13,7 @@
 	"minimum-stability" : "dev",
 	"require": {
 		"php"                       : ">=5.3",
-		"fliglio/consul"            : "dev-master",
+		"fliglio/consul"            : "2.1.*",
 		"sensiolabs/consul-php-sdk" : "1.*",
 		"symfony/Yaml"              : "2.6.*"
 	},
