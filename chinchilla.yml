@@ -1,0 +1,7 @@
+name: foo-bar-endpoint
+servicename: foo-bar
+uri: /consume
+method: POST
+queueconfig:
+  queuename: foo.bar
+  prefetch: 10

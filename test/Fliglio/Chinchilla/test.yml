@@ -1,0 +1,7 @@
+name: test-endpoint
+servicename: test
+uri: /consume
+method: POST
+queueconfig:
+  queuename: foo.bar
+  prefetch: 1
