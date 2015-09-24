@@ -1,5 +1,5 @@
 {
-	"name": "fliglio-tmp/chinchilla",
+	"name": "fliglio/chinchilla",
 	"type": "library",
 	"license": "GPL-3.0+",
 	"bin": [
