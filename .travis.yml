@@ -15,4 +15,5 @@ before_script:
 
 script:
     - ./consul agent -server -bootstrap-expect 1 -data-dir /tmp/consul &
+    - sleep 5
     - ./vendor/bin/phpunit -v -c phpunit.xml
