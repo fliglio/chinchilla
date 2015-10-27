@@ -2,13 +2,18 @@ sudo: false
 language: php
 
 php:
-      - 5.4
-      - 5.5
+    - 5.4
+    - 5.5
 
 
 before_script:
-      - composer self-update
-      - composer install
+    - composer self-update
+    - composer install
+    - wget 'https://dl.bintray.com/mitchellh/consul/0.4.1_linux_amd64.zip'
+    - unzip "0.4.1_linux_amd64.zip"
+    - ./consul --version
 
 script:
-      - ./vendor/bin/phpunit -v -c phpunit.xml
+    - ./consul agent -server -bootstrap-expect 1 -data-dir /tmp/consul &
+    - sleep 5
+    - ./vendor/bin/phpunit -v -c phpunit.xml
