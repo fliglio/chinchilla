@@ -2,3 +2,5 @@
 [![Latest Stable Version](https://poser.pugx.org/fliglio/chinchilla/v/stable.svg)](https://packagist.org/packages/fliglio/chinchilla)
 
 # Fliglio.Chinchilla
+
+bin tool for configuring [Chinchilla](https://github.com/benschw/chinchilla)
