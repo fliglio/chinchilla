@@ -2,20 +2,17 @@
 
 namespace Fliglio\Chinchilla;
 
-use PhpAmqpLib\Channel\AMQPChannel;
-use PhpAmqpLib\Message\AMQPMessage;
+use PhpAmqpLib\Connection\AMQPConnection;
 use Fliglio\Web\MappableApi;
 
-class TopicPublisher {
+class TopicPublisher extends Publisher {
 
-	public $channel;
-	public $exchangeName;
-	public $routingKey;
+	private $exchangeName;
 
-	public function __construct(AMQPChannel $channel, $exchangeName, $routingKey, $passive=false, $durable=true, $auto_delete=false) {
-		$this->channel      = $channel;
+	public function __construct(AMQPConnection $connection, $exchangeName, $passive=false, $durable=true, $auto_delete=false) {
+		parent::__construct($connection);
+
 		$this->exchangeName = $exchangeName;
-		$this->routingKey   = $routingKey;
 
 		$this->channel->exchange_declare(
 			$this->exchangeName,
@@ -26,25 +23,13 @@ class TopicPublisher {
 		);
 	}
 
-	public function publish(MappableApi $api, $headers=[]) {
-		$apiClassName = get_class($api);
-
-		$headers['created'] = ['T', time()];
-		$headers['test']    = ['I', (int) false];
-
-		$vo = $apiClassName::getApiMapper()->marshal($api);
-
-		$msg = new AMQPMessage(json_encode($vo), [
-			'content_type'        => 'text/plain', 
-			'message_id'          => uniqid(),
-			'delivery_mode'       => 2, // persistent : 2, non-persistent : 1
-			'application_headers' => $headers
-		]);
+	public function publish(MappableApi $api, $routingKey, $headers=[]) {
+		$msg = $this->toAMQPMessage($api, $headers);
 
 		$this->channel->basic_publish(
 			$msg, 
 			$this->exchangeName, 
-			$this->routingKey, 
+			$routingKey, 
 			$mandatory=true
 		);
 	}

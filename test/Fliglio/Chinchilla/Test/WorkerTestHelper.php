@@ -2,6 +2,7 @@
 
 namespace Fliglio\Chinchilla\Test;
 
+use PhpAmqpLib\Connection\AMQPConnection;
 use Fliglio\Chinchilla\Connection;
 
 class WorkerTestHelper extends TestHelper {
@@ -9,8 +10,8 @@ class WorkerTestHelper extends TestHelper {
 	public $queueName;
 	public $queues = [];
 
-	public function __construct($queueName) {
-		parent::__construct(Connection::get()->channel());
+	public function __construct(AMQPConnection $conn, $queueName) {
+		parent::__construct($conn->channel());
 
 		$this->queueName = $queueName;
 

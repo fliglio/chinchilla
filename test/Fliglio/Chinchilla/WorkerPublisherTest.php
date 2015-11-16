@@ -2,21 +2,18 @@
 
 namespace Fliglio\Chinchilla;
 
+use PhpAmqpLib\Connection\AMQPConnection;
 use Fliglio\Chinchilla\Test\TestUser;
 use Fliglio\Chinchilla\Test\WorkerTestHelper;
 
 class WorkerPublisherTest extends \PHPUnit_Framework_TestCase {
 
 	public function setup() {
-		Connection::addConfig(new Config);
+		$conn = new AMQPConnection('localhost', '5672', 'guest', 'guest');
 
-		$this->testHelper = new WorkerTestHelper('test.sandbox.worker');
+		$this->testHelper = new WorkerTestHelper($conn, 'test.sandbox.worker');
 
-		$this->publisher = new WorkerPublisher(Connection::get()->channel(), 'test.sandbox.worker');
-	}
-
-	public function teardown() {
-		Connection::reset();
+		$this->publisher = new WorkerPublisher($conn, 'test.sandbox.worker');
 	}
 
 	public function testPublish() {

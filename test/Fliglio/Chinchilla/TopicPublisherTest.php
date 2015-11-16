@@ -2,21 +2,18 @@
 
 namespace Fliglio\Chinchilla;
 
+use PhpAmqpLib\Connection\AMQPConnection;
 use Fliglio\Chinchilla\Test\TestUser;
 use Fliglio\Chinchilla\Test\TopicTestHelper;
 
 class TopicPublisherTest extends \PHPUnit_Framework_TestCase {
 
 	public function setup() {
-		Connection::addConfig(new Config);
+		$conn = new AMQPConnection('localhost', '5672', 'guest', 'guest');
 
-		$this->testHelper = new TopicTestHelper();
+		$this->testHelper = new TopicTestHelper($conn);
 
-		$this->publisher = new TopicPublisher(Connection::get()->channel(), $this->testHelper->exchangeName, 'test.sandbox.update');
-	}
-
-	public function teardown() {
-		Connection::reset();
+		$this->publisher = new TopicPublisher($conn, $this->testHelper->exchangeName);
 	}
 
 	public function testPublish_GlobSubscriber() {
@@ -24,9 +21,9 @@ class TopicPublisherTest extends \PHPUnit_Framework_TestCase {
 		$this->testHelper->createQueue('test.sandbox.*');
 
 		// when
-		$this->publisher->publish(new TestUser);
-		$this->publisher->publish(new TestUser);
-		$this->publisher->publish(new TestUser);
+		$this->publisher->publish(new TestUser, 'test.sandbox.update');
+		$this->publisher->publish(new TestUser, 'test.sandbox.update');
+		$this->publisher->publish(new TestUser, 'test.sandbox.update');
 
 		// then 
 		$msgs = $this->testHelper->getMessages('test.sandbox.*');
@@ -39,7 +36,7 @@ class TopicPublisherTest extends \PHPUnit_Framework_TestCase {
 		$this->testHelper->createQueue('test.sandbox.add');
 
 		// when
-		$this->publisher->publish(new TestUser);
+		$this->publisher->publish(new TestUser, 'test.sandbox.update');
 
 		// then
 		$msgs = $this->testHelper->getMessages('test.sandbox.add');
@@ -52,7 +49,7 @@ class TopicPublisherTest extends \PHPUnit_Framework_TestCase {
 		$this->testHelper->createQueue('test.sandbox.update');
 
 		// when
-		$this->publisher->publish(new TestUser);
+		$this->publisher->publish(new TestUser, 'test.sandbox.update');
 
 		// then
 		$msgs = $this->testHelper->getMessages('test.sandbox.update');

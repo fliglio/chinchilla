@@ -2,6 +2,7 @@
 
 namespace Fliglio\Chinchilla\Test;
 
+use PhpAmqpLib\Connection\AMQPConnection;
 use Fliglio\Chinchilla\Connection;
 
 class TopicTestHelper extends TestHelper {
@@ -9,8 +10,8 @@ class TopicTestHelper extends TestHelper {
 	public $exchangeName;
 	public $queues = [];
 
-	public function __construct() {
-		parent::__construct(Connection::get()->channel());
+	public function __construct(AMQPConnection $conn) {
+		parent::__construct($conn->channel());
 
 		$this->exchangeName = 'TestTopic_'.uniqid();
 

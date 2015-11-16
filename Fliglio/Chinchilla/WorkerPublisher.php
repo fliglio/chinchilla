@@ -2,17 +2,15 @@
 
 namespace Fliglio\Chinchilla;
 
-use PhpAmqpLib\Channel\AMQPChannel;
-use PhpAmqpLib\Message\AMQPMessage;
+use PhpAmqpLib\Connection\AMQPConnection;
 use Fliglio\Web\MappableApi;
 
-class WorkerPublisher {
+class WorkerPublisher extends Publisher {
 
-	public $channel;
-	public $queueName;
+	private $queueName;
 
 	public function __construct(
-			AMQPChannel $channel, 
+			AMQPConnection $connection, 
 			$queueName, 
 			$passive=false, 
 			$durable=true, 
@@ -21,10 +19,11 @@ class WorkerPublisher {
 			$nowait=false, 
 			$arguments=null) {
 
-		$this->channel   = $channel;
+		parent::__construct($connection);
+
 		$this->queueName = $queueName;
 
-		$channel->queue_declare(
+		$this->channel->queue_declare(
 			$queueName, 
 			$passive,
         	$durable,
@@ -36,19 +35,7 @@ class WorkerPublisher {
 	}
 
 	public function publish(MappableApi $api, $headers=[]) {
-		$apiClassName = get_class($api);
-
-		$headers['created'] = ['T', time()];
-		$headers['test']    = ['I', (int) false];
-
-		$vo = $apiClassName::getApiMapper()->marshal($api);
-
-		$msg = new AMQPMessage(json_encode($vo), [
-			'content_type'        => 'text/plain', 
-			'message_id'          => uniqid(),
-			'delivery_mode'       => 2, // persistent : 2, non-persistent : 1
-			'application_headers' => $headers
-		]);
+		$msg = $this->toAMQPMessage($api, $headers);
 
 		$this->channel->basic_publish($msg, '', $this->queueName);
 	}
