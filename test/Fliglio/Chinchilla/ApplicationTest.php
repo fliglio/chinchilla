@@ -48,4 +48,15 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase {
 		$this->assertEquals($yml['name'], 'foo-baz-endpoint');
 	}
 
+	public function testHandlingNullFile() {
+		// given
+		$app = new Application(__DIR__.'/doesnt-exist.yml');
+
+		// when
+		$app->run();
+
+		// then
+		$this->assertTrue(true);
+	}
+
 }

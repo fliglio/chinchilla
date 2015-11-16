@@ -14,17 +14,19 @@ class Application {
 	private $kv;
 
 	public function __construct($configPath) {
-		if (!is_file($configPath)) {
-			throw new \Exception('chinchilla.yml not found.');
+		if (is_file($configPath)) {
+			$this->config = Yaml::parse(file_get_contents($configPath));
+
+			$sf = new consul\ServiceFactory();
+			$this->kv = $sf->get('kv');
 		}
-
-		$this->config = Yaml::parse(file_get_contents($configPath));
-
-		$sf = new consul\ServiceFactory();
-		$this->kv = $sf->get('kv');
 	}
 
 	public function run() {
+		if (!$this->config) {
+			return "\tNo chinchilla.yml found.\n";
+		}
+
 		$output = '';
 
 		if (isset($this->config['endpoints'])) {

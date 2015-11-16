@@ -13,9 +13,10 @@
 	"minimum-stability" : "dev",
 	"require": {
 		"php"                       : ">=5.3",
-		"fliglio/consul"            : "dev-master",
+		"fliglio/web"               : "dev-master",
 		"sensiolabs/consul-php-sdk" : "1.*",
-		"symfony/Yaml"              : "2.6.*"
+		"symfony/Yaml"              : "2.6.*",
+		"videlalvaro/php-amqplib"   : "2.5.0"
 	},
 	"require-dev": {
 		"phpunit/phpunit"           : "~4.1.0"
@@ -23,6 +24,11 @@
 	"autoload": {
 		"psr-0": {
 			"Fliglio\\Chinchilla\\": ""
+		}
+	},
+	"autoload-dev": {
+		"psr-0": {
+			"Fliglio\\Chinchilla\\Test\\" : "test/Fliglio/Chinchilla/Test"
 		}
 	}
 }
