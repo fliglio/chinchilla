@@ -4,17 +4,15 @@ namespace Fliglio\Chinchilla\Test;
 
 use Fliglio\Chinchilla\Connection;
 
-class TopicTestHelper {
+class TopicTestHelper extends TestHelper {
 
 	public $exchangeName;
 	public $queues = [];
 
-	private $channel;
-
 	public function __construct() {
-		$this->exchangeName = 'TestTopic_'.uniqid();
+		parent::__construct(Connection::get()->channel());
 
-		$this->channel = Connection::get()->channel();
+		$this->exchangeName = 'TestTopic_'.uniqid();
 
 		$this->channel->exchange_declare($this->exchangeName, 'topic', false, true, false);
 	}
@@ -53,17 +51,6 @@ class TopicTestHelper {
 		}
 
 		$this->channel->exchange_delete($this->exchangeName);
-	}
-
-	private function consumeOne($queueName) {
-		$msg = $this->channel->basic_get($queueName, $ack=false);
-
-		if ($msg) {
-			$this->channel->basic_ack($msg->delivery_info['delivery_tag']);
-			return $msg->body;
-		} else {
-			return null;
-		}
 	}
 
 }

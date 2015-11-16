@@ -6,24 +6,33 @@ use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Message\AMQPMessage;
 use Fliglio\Web\MappableApi;
 
-class TopicPublisher {
+class WorkerPublisher {
 
 	public $channel;
-	public $exchangeName;
-	public $routingKey;
+	public $queueName;
 
-	public function __construct(AMQPChannel $channel, $exchangeName, $routingKey, $passive=false, $durable=true, $auto_delete=false) {
-		$this->channel      = $channel;
-		$this->exchangeName = $exchangeName;
-		$this->routingKey   = $routingKey;
+	public function __construct(
+			AMQPChannel $channel, 
+			$queueName, 
+			$passive=false, 
+			$durable=true, 
+			$exclusive=false, 
+			$auto_delete=false, 
+			$nowait=false, 
+			$arguments=null) {
 
-		$this->channel->exchange_declare(
-			$this->exchangeName,
-			$type = 'topic',
+		$this->channel   = $channel;
+		$this->queueName = $queueName;
+
+		$channel->queue_declare(
+			$queueName, 
 			$passive,
-			$durable,
-			$auto_delete
-		);
+        	$durable,
+        	$exclusive,
+        	$auto_delete,
+        	$nowait,
+        	$arguments
+        );
 	}
 
 	public function publish(MappableApi $api, $headers=[]) {
@@ -41,12 +50,7 @@ class TopicPublisher {
 			'application_headers' => $headers
 		]);
 
-		$this->channel->basic_publish(
-			$msg, 
-			$this->exchangeName, 
-			$this->routingKey, 
-			$mandatory=true
-		);
+		$this->channel->basic_publish($msg, '', $this->queueName);
 	}
 
 }
