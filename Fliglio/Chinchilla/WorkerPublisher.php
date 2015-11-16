@@ -26,12 +26,12 @@ class WorkerPublisher extends Publisher {
 		$this->channel->queue_declare(
 			$queueName, 
 			$passive,
-        	$durable,
-        	$exclusive,
-        	$auto_delete,
-        	$nowait,
-        	$arguments
-        );
+			$durable,
+			$exclusive,
+			$auto_delete,
+			$nowait,
+			$arguments
+		);
 	}
 
 	public function publish(MappableApi $api, $headers=[]) {
