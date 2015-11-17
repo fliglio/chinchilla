@@ -1,0 +1,21 @@
+sudo: false
+language: php
+
+services:
+    - rabbitmq
+
+php:
+    - 5.4
+    - 5.5
+
+before_script:
+    - composer self-update
+    - composer install
+    - wget 'https://dl.bintray.com/mitchellh/consul/0.4.1_linux_amd64.zip'
+    - unzip "0.4.1_linux_amd64.zip"
+    - ./consul --version
+
+script:
+    - ./consul agent -server -bootstrap-expect 1 -data-dir /tmp/consul &
+    - sleep 5
+    - ./vendor/bin/phpunit -v -c phpunit.xml
