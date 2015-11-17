@@ -14,6 +14,8 @@
 	"require": {
 		"php"                       : ">=5.3",
 		"fliglio/web"               : "dev-master",
+		"fliglio/routing"           : "dev-master",
+		"fliglio/flfc"              : "dev-master",
 		"sensiolabs/consul-php-sdk" : "1.*",
 		"symfony/Yaml"              : "2.6.*",
 		"videlalvaro/php-amqplib"   : "2.5.0"
