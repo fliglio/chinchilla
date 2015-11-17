@@ -5,7 +5,7 @@ namespace Fliglio\Chinchilla;
 use Fliglio\Flfc\Context;
 use Fliglio\Routing\Injectable;
 
-class InjectableMessage implements Injectable {
+class MessageInjectableFactory implements Injectable {
 
 	const MESSAGE_CLASSNAME = "Fliglio\Chinchilla\Message";
 

@@ -16,7 +16,7 @@ class MessageTest extends \PHPUnit_Framework_TestCase {
 		$req->addHeader('custom-header', 'foo');
 		
 		$ctx = new Context($req, new Response);
-		$injectable = new InjectableMessage();
+		$injectable = new MessageInjectableFactory();
 
 		// when
 		$msg = $injectable->create($ctx, '');
