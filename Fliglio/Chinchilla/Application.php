@@ -13,11 +13,11 @@ class Application {
 	private $config;
 	private $kv;
 
-	public function __construct($configPath) {
+	public function __construct($configPath, $options = []) {
 		if (is_file($configPath)) {
 			$this->config = Yaml::parse(file_get_contents($configPath));
 
-			$sf = new consul\ServiceFactory();
+			$sf = new consul\ServiceFactory($options);
 			$this->kv = $sf->get('kv');
 		}
 	}
