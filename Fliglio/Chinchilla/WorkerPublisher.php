@@ -38,6 +38,8 @@ class WorkerPublisher extends Publisher {
 		$msg = $this->toAMQPMessage($api, $headers);
 
 		$this->channel->basic_publish($msg, '', $this->queueName);
+
+		return $msg;
 	}
 
 }

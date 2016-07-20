@@ -16,6 +16,17 @@ class TopicPublisherTest extends \PHPUnit_Framework_TestCase {
 		$this->publisher = new TopicPublisher($conn, $this->testHelper->exchangeName);
 	}
 
+	public function testMessageId() {
+		// given
+		$this->testHelper->createQueue('test.sandbox.*');
+
+		// when
+		$msg = $this->publisher->publish(new TestUser, 'test.sandbox.update');
+
+		// then 
+		$this->assertTrue(strlen($msg->get('message_id')) > 0);
+	}
+
 	public function testPublish_GlobSubscriber() {
 		// given
 		$this->testHelper->createQueue('test.sandbox.*');

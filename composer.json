@@ -18,7 +18,7 @@
 		"fliglio/routing"           : "2.1.*",
 		"fliglio/flfc"              : "2.1.*",
 		"sensiolabs/consul-php-sdk" : "1.*",
-		"symfony/Yaml"              : "2.6.*",
+		"symfony/Yaml"              : "2.*",
 		"videlalvaro/php-amqplib"   : "2.5.0"
 	},
 	"require-dev": {
@@ -31,7 +31,7 @@
 	},
 	"autoload-dev": {
 		"psr-0": {
-			"Fliglio\\Chinchilla\\Test\\" : "test/Fliglio/Chinchilla/Test"
+			"Fliglio\\Chinchilla\\" : "test"
 		}
 	}
 }
