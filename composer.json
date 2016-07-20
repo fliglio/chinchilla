@@ -30,7 +30,7 @@
 	},
 	"autoload-dev": {
 		"psr-0": {
-			"Fliglio\\Chinchilla\\Test\\" : "test/Fliglio/Chinchilla/Test"
+			"Fliglio\\Chinchilla\\" : "test"
 		}
 	}
 }

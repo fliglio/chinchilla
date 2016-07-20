@@ -32,6 +32,8 @@ class TopicPublisher extends Publisher {
 			$routingKey, 
 			$mandatory=true
 		);
+
+		return $msg;
 	}
 
 }

@@ -33,5 +33,4 @@ abstract class Publisher {
 		return $msg;
 	}
 
-
 }
