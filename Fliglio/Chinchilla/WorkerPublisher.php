@@ -42,4 +42,27 @@ class WorkerPublisher extends Publisher {
 		return $msg;
 	}
 
+	// Polls a queue looking for message with a specific ID
+	public function findMessage($msgId, $queueName=null, $timeout = 60) {
+		$startTime = time();
+		$queueName = $queueName ? $queueName : $this->queueName;
+
+		do {
+			if (time() - $startTime > $timeout) {
+				throw new TimeoutException(sprintf("Timeout of '%s' exceeded", $timeout));
+			}
+
+			$msg = $this->consumeOne($queueName);
+
+			if (is_null($msg)) {
+				usleep(250000); // 125000 1/8s, 250000 1/4s
+			} else {
+				if ($msg->has('message_id') && $msg->get('message_id') == $msgId) {
+					return $msg;
+				}
+			}
+
+		} while (true);
+	}
+
 }
