@@ -24,10 +24,6 @@ class TopicPublisher extends Publisher {
 	}
 
 	public function publish(MappableApi $api, $routingKey, $headers=[]) {
-		$headers = array_merge($headers, [
-			'reply_to' => $routingKey .'.reply'
-		]);
-
 		$msg = $this->toAMQPMessage($api, $headers);
 
 		$this->channel->basic_publish(

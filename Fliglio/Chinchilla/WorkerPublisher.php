@@ -35,10 +35,6 @@ class WorkerPublisher extends Publisher {
 	}
 
 	public function publish(MappableApi $api, $headers=[]) {
-		$headers = array_merge($headers, [
-			'reply_to' => $this->queueName .'.reply'
-		]);
-
 		$msg = $this->toAMQPMessage($api, $headers);
 
 		$this->channel->basic_publish($msg, '', $this->queueName);

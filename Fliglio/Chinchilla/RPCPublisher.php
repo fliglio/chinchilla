@@ -7,9 +7,42 @@ use Fliglio\Web\MappableApi;
 use PhpAmqpLib\Connection\AMQPConnection;
 use PhpAmqpLib\Message\AMQPMessage;
 
-class ReplyPublisher extends Publisher {
+class RPCPublisher extends Publisher {
 
-	public function publish(Message $msg, MappableApi $api) {
+	private $queueName;
+
+	public function __construct(
+			AMQPConnection $connection, 
+			$queueName, 
+			$passive=false, 
+			$durable=true, 
+			$exclusive=false, 
+			$auto_delete=false, 
+			$nowait=false, 
+			$arguments=null) {
+
+		parent::__construct($connection);
+
+		$this->queueName = $queueName;
+
+		$this->worker = new WorkerPublisher($connection, 
+			$queueName, 
+			$passive, 
+			$durable, 
+			$exclusive, 
+			$auto_delete, 
+			$nowait, 
+			$arguments
+		);
+	}
+
+	public function publish(MappableApi $api) {
+		return $this->worker->publish($api, [
+			'reply_to' => $this->queueName .'.reply'
+		]);
+	}
+
+	public function publishReply(Message $msg, MappableApi $api) {
 		if (!$msg->getHeader('reply_to')) {
 			return null;
 		}
