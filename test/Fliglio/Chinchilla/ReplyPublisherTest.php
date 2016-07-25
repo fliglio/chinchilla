@@ -12,9 +12,9 @@ class ReplyPublisherTest extends \PHPUnit_Framework_TestCase {
 	public function setup() {
 		$conn = new AMQPConnection('localhost', '5672', 'guest', 'guest');
 
-		$this->testHelper = new WorkerTestHelper($conn, 'test.sandbox.worker');
+		$this->testHelper = new WorkerTestHelper($conn, 'test.sandbox.replypublisher');
 
-		$this->worker = new WorkerPublisher($conn, 'test.sandbox.worker');
+		$this->worker = new WorkerPublisher($conn, 'test.sandbox.replypublisher');
 		$this->reply  = new ReplyPublisher($conn);
 	}
 

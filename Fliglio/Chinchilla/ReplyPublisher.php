@@ -50,6 +50,7 @@ class ReplyPublisher extends Publisher {
 					$this->channel->basic_ack($msg->delivery_info['delivery_tag']);
 
 				} else if ($msg->has('message_id') && $msg->get('message_id') == $msgId) {
+					$this->channel->basic_ack($msg->delivery_info['delivery_tag']);
 					return $msg;
 				}
 			}
