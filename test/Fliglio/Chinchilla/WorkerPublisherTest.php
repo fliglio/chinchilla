@@ -16,28 +16,6 @@ class WorkerPublisherTest extends \PHPUnit_Framework_TestCase {
 		$this->publisher = new WorkerPublisher($conn, 'test.sandbox.worker');
 	}
 
-	public function testConsumerPoll() {
-		// given
-		$msgA = $this->publisher->publish(new TestUser);
-
-		// when
-		$msgB = $this->publisher->findMessage($msgA->get('message_id'));
-
-		// then 
-		$this->assertEquals($msgA->get('message_id'), $msgB->get('message_id'));
-	}
-
-	/** 
-	 * @expectedException Fliglio\Chinchilla\TimeoutException
-	 */
-	public function testConsumerPoll_Timeout() {
-		// given
-		$msgA = $this->publisher->publish(new TestUser);
-
-		// when
-		$msgB = $this->publisher->findMessage('wrong_msg_id', 'test.sandbox.worker', 1);
-	}
-
 	public function testPublish() {
 		// when
 		$this->publisher->publish(new TestUser);
