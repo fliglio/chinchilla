@@ -7,39 +7,26 @@ use Fliglio\Web\MappableApi;
 use PhpAmqpLib\Connection\AMQPConnection;
 use PhpAmqpLib\Message\AMQPMessage;
 
-class RPCPublisher extends Publisher {
+class RPCPublisher {
 
-	private $queueName;
+	private $connection;
+	private $amqpMsg;
 
-	public function __construct(
-			AMQPConnection $connection, 
-			$queueName, 
-			$passive=false, 
-			$durable=true, 
-			$exclusive=false, 
-			$auto_delete=false, 
-			$nowait=false, 
-			$arguments=null) {
-
-		parent::__construct($connection);
-
-		$this->queueName = $queueName;
-
-		$this->worker = new WorkerPublisher($connection, 
-			$queueName, 
-			$passive, 
-			$durable, 
-			$exclusive, 
-			$auto_delete, 
-			$nowait, 
-			$arguments
-		);
+	public function __construct(AMQPConnection $conn, AMQPMessage $amqpMsg = null) {
+		$this->connection = $conn;
+		$this->amqpMsg    = $amqpMsg;
 	}
 
-	public function publish(MappableApi $api) {
-		return $this->worker->publish($api, [
-			'reply_to' => $this->queueName .'.reply'
-		]);
+	public function getAmqpMsg() {
+		return $this->amqpMsg;
+	}
+
+	public function publish(MappableApi $api, $queueName) {
+		$worker = new WorkerPublisher($this->connection, $queueName);
+
+		return new self($this->connection, $worker->publish($api, [
+			'reply_to' => $queueName .'.reply'
+		]));
 	}
 
 	public function publishReply(Message $msg, MappableApi $api) {
@@ -47,24 +34,25 @@ class RPCPublisher extends Publisher {
 			return null;
 		}
 
-		$this->mkQueue($msg->getHeader('reply_to'));
+		$queueName = $msg->getHeader('reply_to');
 
-		$amqpMsg = $this->toAMQPMessage(
-			$api, 
-			[], 
-			$msg->getHeader('message_id'), 
-			strtotime('+5 minutes')
-		);
+		$worker = new WorkerPublisher($this->connection, $queueName);
 
-		$this->channel->basic_publish($amqpMsg, '', $msg->getHeader('reply_to'));
+		return $worker->publish($api, [
+			'expiration' => ['T', strtotime('+5 minutes')],
+		], $msg->getId());
 	}
 
 	// Polls a queue looking for message with a specific ID
-	public function getReply(AMQPMessage $amqpMsg, $timeout = 60) {
-		$msgId = $amqpMsg->get('message_id');
-		$queueName = $amqpMsg->get('application_headers')['reply_to'];
+	public function getReply($timeout = 60) {
+		if (!$this->amqpMsg) {
+			throw new Exception('AMQP message required to get reply');
+		}
 
-		$this->mkQueue($queueName);
+		$msgId = $this->amqpMsg->get('message_id');
+		$queueName = $this->amqpMsg->get('application_headers')['reply_to'];
+
+		$worker = new WorkerPublisher($this->connection, $queueName);
 
 		$startTime = time();
 
@@ -73,34 +61,22 @@ class RPCPublisher extends Publisher {
 				throw new TimeoutException(sprintf("Timeout of '%s' exceeded", $timeout));
 			}
 
-			$msg = $this->consumeOne($queueName);
+			$msg = $worker->consumeOne($queueName);
 
 			if (is_null($msg)) {
 				usleep(250000); // 125000 1/8s, 250000 1/4s
 
 			} else {
 				if ($msg && $msg->has('expiration') && $msg->has('expiration') < time()) {
-					$this->channel->basic_ack($msg->delivery_info['delivery_tag']);
+					$worker->ack($msg);
 
 				} else if ($msg->has('message_id') && $msg->get('message_id') == $msgId) {
-					$this->channel->basic_ack($msg->delivery_info['delivery_tag']);
+					$worker->ack($msg);
 					return $msg;
 				}
 			}
 
 		} while (true);
-	}
-
-	private function mkQueue($queueName) {
-		$this->channel->queue_declare(
-			$queueName, 
-			$passive     = false, 
-			$durable     = true, 
-			$exclusive   = false, 
-			$auto_delete = false, 
-			$nowait      = false, 
-			$arguments   = null
-		);
 	}
 
 }

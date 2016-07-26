@@ -12,16 +12,16 @@ class RPCPublisherTest extends \PHPUnit_Framework_TestCase {
 	public function setup() {
 		$conn = new AMQPConnection('localhost', '5672', 'guest', 'guest');
 
-		$this->testHelper = new WorkerTestHelper($conn, 'test.sandbox.replypublisher');
-
-		$this->rpcWorker = new RPCPublisher($conn, 'test.sandbox.replypublisher');
+		$this->queueName = 'test.sandbox.replypublisher';
+		$this->rpcWorker = new RPCPublisher($conn);
 	}
 
 	public function testConsumeReply() {
 		// given
-		$this->rpcWorker->publish(new TestUser);
-		$this->rpcWorker->publish(new TestUser);
-		$msgA = $this->rpcWorker->publish(new TestUser);
+		$this->rpcWorker->publish(new TestUser, $this->queueName);
+		$this->rpcWorker->publish(new TestUser, $this->queueName);
+		$rpcWorker = $this->rpcWorker->publish(new TestUser, $this->queueName);
+		$msgA = $rpcWorker->getAmqpMsg();
 
 		// stub out injectable
 		$messageInjectable = (new Message())->setHeaders([
@@ -32,7 +32,7 @@ class RPCPublisherTest extends \PHPUnit_Framework_TestCase {
 		// when
 		$this->rpcWorker->publishReply($messageInjectable, new TestUserReply);
 
-		$msgB = $this->rpcWorker->getReply($msgA);
+		$msgB = $rpcWorker->getReply();
 
 		// then 
 		$this->assertEquals($msgA->get('message_id'), $msgB->get('message_id'));
@@ -43,11 +43,7 @@ class RPCPublisherTest extends \PHPUnit_Framework_TestCase {
 	 * @expectedException Fliglio\Chinchilla\TimeoutException
 	 */
 	public function testConsume_Timeout() {
-		// given
-		$msgA = $this->rpcWorker->publish(new TestUser);
-
-		// when
-		$msgB = $this->rpcWorker->getReply($msgA, 2);
+		$this->rpcWorker->publish(new TestUser, $this->queueName)->getReply(1);
 	}
 
 }

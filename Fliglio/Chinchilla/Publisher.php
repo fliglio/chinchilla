@@ -16,7 +16,7 @@ abstract class Publisher {
 		$this->channel    = $connection->channel();
 	}
 
-	protected function toAMQPMessage(MappableApi $api, $headers = [], $msgId = null, $expiration=null) {
+	protected function toAMQPMessage(MappableApi $api, $headers = [], $msgId = null) {
 		$apiClassName = get_class($api);
 
 		$headers['created'] = ['T', time()];
@@ -30,16 +30,16 @@ abstract class Publisher {
 			'application_headers' => $headers
 		];
 
-		if ($expiration) {
-			$amqpHeaders['expiration'] = $expiration;
-		}
-
 		return new AMQPMessage(json_encode($vo), $amqpHeaders);
 	}
 
-	protected function consumeOne($queueName) {
+	public function consumeOne($queueName) {
 		$msg = $this->channel->basic_get($queueName, $ack=false);
 		return $msg;
+	}
+
+	public function ack(AMQPMessage $msg) {
+		$this->channel->basic_ack($msg->delivery_info['delivery_tag']);
 	}
 
 }
