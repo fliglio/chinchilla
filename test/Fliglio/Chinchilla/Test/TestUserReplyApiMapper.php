@@ -4,13 +4,13 @@ namespace Fliglio\Chinchilla\Test;
 
 use Fliglio\Web\ApiMapper;
 
-class TestUserApiMapper implements ApiMapper {
+class TestUserReplyApiMapper implements ApiMapper {
 	public function marshal($api) {
 		return [
-			'foo' => $api->getFoo(),
+			'id' => $api->getId(),
 		];
 	}
 	public function unmarshal($params) {
-		return (new TestUser())->setId($params['id']);
+		return (new TestUserReply())->setFoo($params['foo']);
 	}
 }
