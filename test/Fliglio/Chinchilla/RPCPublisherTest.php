@@ -25,14 +25,46 @@ class RPCPublisherTest extends \PHPUnit_Framework_TestCase {
 
 		// stub out injectable
 		$messageInjectable = (new Message())->setHeaders([
-			'message_id' => $msgA->get('message_id'),
-			'reply_to'   => $msgA->get('application_headers')['reply_to']
+			'x-message-id' => $msgA->get('message_id'),
+			'x-reply-to'   => $msgA->get('application_headers')['reply_to']
 		]);
 
 		// when
 		$this->rpcWorker->publishReply($messageInjectable, new TestUserReply);
 
-		$msgB = $rpcWorker->getReply();
+		$msgB = $rpcWorker->getReply(1);
+
+		// then 
+		$this->assertEquals($msgA->get('message_id'), $msgB->get('message_id'));
+		$this->assertEquals($msgB->body, '{"id":1}');
+	}
+
+	public function testConsumeReply_MultipleMessages() {
+		// given
+		$this->rpcWorker->publish(new TestUser, $this->queueName);
+		$this->rpcWorker->publish(new TestUser, $this->queueName);
+		$rpcWorker = $this->rpcWorker->publish(new TestUser, $this->queueName);
+		$msgA = $rpcWorker->getAmqpMsg();
+
+		// put 100 replies on the channel, with the last one having the correct msg id
+		for ($i=0; $i < 100; $i++) { 
+			$messageInjectable = (new Message())->setHeaders([
+				'x-message-id' => uniqid(),
+				'x-reply-to'   => $msgA->get('application_headers')['reply_to']
+			]);
+			$this->rpcWorker->publishReply($messageInjectable, new TestUserReply);
+		}
+
+		// correct reply
+		$messageInjectable = (new Message())->setHeaders([
+			'x-message-id' => $msgA->get('message_id'),
+			'x-reply-to'   => $msgA->get('application_headers')['reply_to']
+		]);
+
+		// when
+		$this->rpcWorker->publishReply($messageInjectable, new TestUserReply);
+
+		$msgB = $rpcWorker->getReply(1);
 
 		// then 
 		$this->assertEquals($msgA->get('message_id'), $msgB->get('message_id'));
