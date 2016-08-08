@@ -24,7 +24,10 @@ class Message {
 	}
 
 	public function getId() {
-		return $this->getHeader('message_id');
+		return $this->getHeader('x-message-id');
+	}
+	public function getReplyTo() {
+		return $this->getHeader('x-reply-to');
 	}
 	public function getHeader($key) {
 		return isset($this->headers[$key]) ? $this->headers[$key] : null;
