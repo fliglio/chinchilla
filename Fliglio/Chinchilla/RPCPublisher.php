@@ -25,16 +25,16 @@ class RPCPublisher {
 		$worker = new WorkerPublisher($this->connection, $queueName);
 
 		return new self($this->connection, $worker->publish($api, [
-			'reply_to' => $queueName .'.reply'
+			'reply_to' => $queueName .'.reply',
 		]));
 	}
 
 	public function publishReply(Message $msg, MappableApi $api) {
-		if (!$msg->getHeader('reply_to')) {
+		if (!$msg->getReplyTo()) {
 			return null;
 		}
 
-		$queueName = $msg->getHeader('reply_to');
+		$queueName = $msg->getReplyTo();
 
 		$worker = new WorkerPublisher($this->connection, $queueName);
 
