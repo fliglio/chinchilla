@@ -10,7 +10,6 @@
 		"email": "philipwhitt88@gmail.com",
 		"homepage": "http://www.philipwhitt.com"
 	}],
-	"minimum-stability" : "dev",
 	"require": {
 		"php"                       : ">=5.3",
 		"fliglio/consul"            : "2.1.*",
