@@ -32,7 +32,7 @@ class RPCPublisherTest extends \PHPUnit_Framework_TestCase {
 		// when
 		$this->rpcWorker->publishReply($messageInjectable, new TestUserReply);
 
-		$msgB = $rpcWorker->getReply(1);
+		$msgB = $rpcWorker->getReply(5);
 
 		// then 
 		$this->assertEquals($msgA->get('message_id'), $msgB->get('message_id'));
@@ -64,7 +64,7 @@ class RPCPublisherTest extends \PHPUnit_Framework_TestCase {
 		// when
 		$this->rpcWorker->publishReply($messageInjectable, new TestUserReply);
 
-		$msgB = $rpcWorker->getReply(1);
+		$msgB = $rpcWorker->getReply(5);
 
 		// then 
 		$this->assertEquals($msgA->get('message_id'), $msgB->get('message_id'));
