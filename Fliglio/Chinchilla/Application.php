@@ -28,8 +28,8 @@ class Application {
 		}
 
 		if (isset($this->config['environments'])) {
-			if (isset($this->config['environments'][$_SERVER['ENVIRONMENT']])) {
-				$output = $this->parseConfigs($this->config['environments'][$_SERVER['ENVIRONMENT']]);
+			if (isset($this->config['environments'][$_SERVER['CHICHI_ENVIRONMENT']])) {
+				$output = $this->parseConfigs($this->config['environments'][$_SERVER['CHICHI_ENVIRONMENT']]);
 			} else {
 				return "\tNo matching environment found.\n";
 			}
