@@ -48,15 +48,45 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase {
 		$this->assertEquals($yml['name'], 'foo-baz-endpoint');
 	}
 
-	public function testHandlingNullFile() {
+	public function testMultiEnvEndpoint() {
 		// given
-		$app = new Application(__DIR__.'/doesnt-exist.yml');
+		$app = new Application(__DIR__.'/test-multiEnv.yml');
+		$_SERVER['CHICHI_ENVIRONMENT'] = 'dev';
 
 		// when
 		$app->run();
 
 		// then
-		$this->assertTrue(true);
+		$value = $this->kv->get(Application::KV_PATH.'/foo-bar-endpoint.yml', ['raw' => true]);
+		$yml = Yaml::parse($value->getBody());
+		$this->assertEquals($yml['name'], 'foo-bar-endpoint');
+
+		$value = $this->kv->get(Application::KV_PATH.'/foo-baz-endpoint.yml', ['raw' => true]);
+		$yml = Yaml::parse($value->getBody());
+		$this->assertEquals($yml['name'], 'foo-baz-endpoint');
+	}
+
+	public function testMultiEnvEndpoint_withoutMatchingEnvironment() {
+		// given
+		$app = new Application(__DIR__.'/test-multiEnv.yml');
+		$_SERVER['CHICHI_ENVIRONMENT'] = uniqid();
+
+		// when
+		$output = $app->run();
+
+		// then
+		$this->assertEquals("\tNo matching environment found.\n", $output);
+	}
+
+	public function testHandlingNullFile() {
+		// given
+		$app = new Application(__DIR__.'/doesnt-exist.yml');
+
+		// when
+		$output = $app->run();
+
+		// then
+		$this->assertEquals("\tNo chinchilla.yml found.\n", $output);
 	}
 
 }

@@ -3,7 +3,6 @@
 namespace Fliglio\Chinchilla;
 
 use Fliglio\Web\MappableApi;
-
 use PhpAmqpLib\Connection\AMQPConnection;
 use PhpAmqpLib\Message\AMQPMessage;
 

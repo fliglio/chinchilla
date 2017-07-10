@@ -3,8 +3,8 @@
 namespace Fliglio\Chinchilla;
 
 use SensioLabs\Consul as consul;
-use Symfony\Component\Yaml\Yaml;
 use Symfony\Component\Yaml\Dumper;
+use Symfony\Component\Yaml\Yaml;
 
 class Application {
 
@@ -27,15 +27,30 @@ class Application {
 			return "\tNo chinchilla.yml found.\n";
 		}
 
+		if (isset($this->config['environments'])) {
+			if (isset($this->config['environments'][$_SERVER['ENVIRONMENT']])) {
+				$output = $this->parseConfigs($this->config['environments'][$_SERVER['ENVIRONMENT']]);
+			} else {
+				return "\tNo matching environment found.\n";
+			}
+		} else {
+			$output = $this->parseConfigs($this->config);
+		}
+
+		return $output;
+	}
+
+	private function parseConfigs($config) {
+
 		$output = '';
 
-		if (isset($this->config['endpoints'])) {
-			foreach ($this->config['endpoints'] as $config) {
-				$output .= $this->register($config);
+		if (isset($config['endpoints'])) {
+			foreach ($config['endpoints'] as $conf) {
+				$output .= $this->register($conf);
 			}
 
 		} else {
-			$output = $this->register($this->config);
+			$output = $this->register($config);
 		}
 
 		return $output;
@@ -49,5 +64,4 @@ class Application {
 
 		return sprintf("\tInstalled chinchilla endpoint: %s\n", $name);
 	}
-
 }

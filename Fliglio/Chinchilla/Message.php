@@ -2,8 +2,6 @@
 
 namespace Fliglio\Chinchilla;
 
-use Fliglio\Flfc\Context;
-
 class Message {
 
 	private $headers;
