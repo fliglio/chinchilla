@@ -51,7 +51,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase {
 	public function testMultiEnvEndpoint() {
 		// given
 		$app = new Application(__DIR__.'/test-multiEnv.yml');
-		$_SERVER['CHICHI_ENVIRONMENT'] = 'dev';
+		$_SERVER['CHINCHILLA_ENV'] = 'dev';
 
 		// when
 		$app->run();
@@ -69,7 +69,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase {
 	public function testMultiEnvEndpoint_withoutMatchingEnvironment() {
 		// given
 		$app = new Application(__DIR__.'/test-multiEnv.yml');
-		$_SERVER['CHICHI_ENVIRONMENT'] = uniqid();
+		$_SERVER['CHINCHILLA_ENV'] = uniqid();
 
 		// when
 		$output = $app->run();
