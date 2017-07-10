@@ -27,20 +27,22 @@ class Application {
 			return "\tNo chinchilla.yml found.\n";
 		}
 
-		if (isset($this->config['environments'])) {
-			if (isset($this->config['environments'][$_SERVER['CHICHI_ENVIRONMENT']])) {
-				$output = $this->parseConfigs($this->config['environments'][$_SERVER['CHICHI_ENVIRONMENT']]);
+		$env = getenv('CHICHI_ENVIRONMENT');
+
+		if ($env && isset($this->config['environments'])) {
+			if (isset($this->config['environments'][$env])) {
+				$output = $this->registerConfigs($this->config['environments'][$env]);
 			} else {
 				return "\tNo matching environment found.\n";
 			}
 		} else {
-			$output = $this->parseConfigs($this->config);
+			$output = $this->registerConfigs($this->config);
 		}
 
 		return $output;
 	}
 
-	private function parseConfigs($config) {
+	private function registerConfigs($config) {
 
 		$output = '';
 
