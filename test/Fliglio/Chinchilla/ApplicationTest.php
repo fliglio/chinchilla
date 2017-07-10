@@ -69,13 +69,13 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase {
 	public function testMultiEnvEndpoint_withoutMatchingEnvironment() {
 		// given
 		$app = new Application(__DIR__.'/test-multiEnv.yml');
-		$_SERVER['CHINCHILLA_ENV'] = uniqid();
+		$_SERVER['CHINCHILLA_ENV'] = $env = uniqid();
 
 		// when
 		$output = $app->run();
 
 		// then
-		$this->assertEquals("\tNo matching environment found.\n", $output);
+		$this->assertEquals("\tNo environment matching $env found.\n", $output);
 	}
 
 	public function testHandlingNullFile() {

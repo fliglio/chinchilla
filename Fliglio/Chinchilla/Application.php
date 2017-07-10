@@ -33,7 +33,7 @@ class Application {
 			if (isset($this->config['environments'][$env])) {
 				$output = $this->registerConfigs($this->config['environments'][$env]);
 			} else {
-				return "\tNo matching environment found.\n";
+				return "\tNo environment matching $env found.\n";
 			}
 		} else {
 			$output = $this->registerConfigs($this->config);
