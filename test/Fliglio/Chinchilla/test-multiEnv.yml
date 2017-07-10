@@ -2,7 +2,7 @@ environments:
   dev:
     endpoints:
       -
-        name: foo-bar-endpoint
+        name: foo-bar-baz-endpoint
         servicename: foo-bar
         uri: /foo-bar
         method: POST
@@ -10,7 +10,7 @@ environments:
           queuename: foo.bar
           prefetch: 2
       -
-        name: foo-baz-endpoint
+        name: foo-baz-bar-endpoint
         servicename: foo-baz
         uri: /foo-baz
         method: POST

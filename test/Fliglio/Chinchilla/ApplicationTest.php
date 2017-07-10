@@ -57,13 +57,13 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase {
 		$app->run();
 
 		// then
-		$value = $this->kv->get(Application::KV_PATH.'/foo-bar-endpoint.yml', ['raw' => true]);
+		$value = $this->kv->get(Application::KV_PATH.'/foo-bar-baz-endpoint.yml', ['raw' => true]);
 		$yml = Yaml::parse($value->getBody());
-		$this->assertEquals($yml['name'], 'foo-bar-endpoint');
+		$this->assertEquals($yml['name'], 'foo-bar-baz-endpoint');
 
-		$value = $this->kv->get(Application::KV_PATH.'/foo-baz-endpoint.yml', ['raw' => true]);
+		$value = $this->kv->get(Application::KV_PATH.'/foo-baz-bar-endpoint.yml', ['raw' => true]);
 		$yml = Yaml::parse($value->getBody());
-		$this->assertEquals($yml['name'], 'foo-baz-endpoint');
+		$this->assertEquals($yml['name'], 'foo-baz-bar-endpoint');
 	}
 
 	public function testMultiEnvEndpoint_withoutMatchingEnvironment() {
