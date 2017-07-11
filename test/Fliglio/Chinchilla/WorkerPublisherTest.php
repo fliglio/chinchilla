@@ -2,9 +2,9 @@
 
 namespace Fliglio\Chinchilla;
 
-use PhpAmqpLib\Connection\AMQPConnection;
 use Fliglio\Chinchilla\Test\TestUser;
 use Fliglio\Chinchilla\Test\WorkerTestHelper;
+use PhpAmqpLib\Connection\AMQPConnection;
 
 class WorkerPublisherTest extends \PHPUnit_Framework_TestCase {
 

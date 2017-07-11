@@ -2,7 +2,6 @@
 
 namespace Fliglio\Chinchilla;
 
-use Fliglio\Flfc\Apps\App;
 use Symfony\Component\Yaml\Yaml;
 
 // requires consul to be running
