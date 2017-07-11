@@ -1,0 +1,19 @@
+environments:
+  dev:
+    endpoints:
+      -
+        name: foo-bar-endpoint
+        servicename: foo-bar
+        uri: /foo-bar
+        method: POST
+        queueconfig:
+          queuename: foo.bar
+          prefetch: 2
+      -
+        name: foo-baz-endpoint
+        servicename: foo-baz
+        uri: /foo-baz
+        method: POST
+        queueconfig:
+          queuename: foo.baz
+          prefetch: 20
