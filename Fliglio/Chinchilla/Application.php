@@ -27,9 +27,9 @@ class Application {
 			return "\tNo chinchilla.yml found.\n";
 		}
 
-		$env = isset($_SERVER['CHINCHILLA_ENV']) ? $_SERVER['CHINCHILLA_ENV'] : null;
+		$env = getenv('CHINCHILLA_ENV');
 
-		if (!is_null($env) && isset($this->config['environments'])) {
+		if ($env && isset($this->config['environments'])) {
 			if (isset($this->config['environments'][$env])) {
 				$output = $this->registerConfigs($this->config['environments'][$env]);
 			} else {
