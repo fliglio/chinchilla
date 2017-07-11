@@ -2,8 +2,8 @@
 
 namespace Fliglio\Chinchilla;
 
-use PhpAmqpLib\Connection\AMQPConnection;
 use Fliglio\Web\MappableApi;
+use PhpAmqpLib\Connection\AMQPConnection;
 
 class WorkerPublisher extends Publisher {
 

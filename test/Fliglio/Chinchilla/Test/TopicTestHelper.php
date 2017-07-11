@@ -2,8 +2,8 @@
 
 namespace Fliglio\Chinchilla\Test;
 
-use PhpAmqpLib\Connection\AMQPConnection;
 use Fliglio\Chinchilla\Connection;
+use PhpAmqpLib\Connection\AMQPConnection;
 
 class TopicTestHelper extends TestHelper {
 
