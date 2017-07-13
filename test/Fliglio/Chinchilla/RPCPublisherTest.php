@@ -59,9 +59,11 @@ class RPCPublisherTest extends \PHPUnit_Framework_TestCase {
 	public function testPublish_canUseFilters() {
 		// given
 		$this->rpcWorker->publish(new TestUser, $this->queueName, [new Md5Filter]);
+		$worker = (new WorkerPublisher($this->conn, $this->queueName));
 
 		// when
-		$msg = (new WorkerPublisher($this->conn, $this->queueName))->consumeOne($this->queueName);
+		$msg = $worker->consumeOne($this->queueName);
+		$worker->ack($msg);
 
 		// then
 		$this->assertEquals(md5(json_encode((new TestUser)->marshal())), $msg->body);

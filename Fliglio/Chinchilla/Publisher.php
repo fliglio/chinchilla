@@ -13,6 +13,11 @@ abstract class Publisher {
 	/** @var Filter[] */
 	protected $filters = [];
 
+	/**
+	 * Publisher constructor.
+	 * @param AMQPConnection $connection
+	 * @param Filter[] $filters
+	 */
 	public function __construct(AMQPConnection $connection, $filters = []) {
 		$this->connection = $connection;
 		$this->channel    = $connection->channel();
