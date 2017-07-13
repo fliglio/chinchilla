@@ -20,9 +20,12 @@ class RPCPublisher {
 		return $this->amqpMsg;
 	}
 
-	public function publish(MappableApi $api, $queueName) {
+	public function publish(MappableApi $api, $queueName, array $filters = []) {
 		$worker = new WorkerPublisher($this->connection, $queueName);
 
+		foreach ($filters as $filter) {
+			$worker->addFilter($filter);
+		}
 		return new self($this->connection, $worker->publish($api, [
 			'reply_to' => $queueName .'.reply',
 		]));
