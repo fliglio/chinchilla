@@ -2,7 +2,6 @@
 
 namespace Fliglio\Chinchilla;
 
-use DateTime;
 use Fliglio\Web\MappableApi;
 use PhpAmqpLib\Connection\AMQPConnection;
 use PhpAmqpLib\Message\AMQPMessage;
@@ -105,7 +104,7 @@ class RPCPublisher {
 	private function hasMessageExpired($msg) {
 		$appHeaders = $msg->get('application_headers')->getNativeData();
 		return array_key_exists('expiration', $appHeaders)
-			&& $appHeaders['expiration']->getTimestamp() < (new DateTime())->getTimestamp();
+			&& $appHeaders['expiration']->getTimestamp() < time();
 	}
 
 }
