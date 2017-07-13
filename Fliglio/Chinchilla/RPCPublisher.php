@@ -2,6 +2,7 @@
 
 namespace Fliglio\Chinchilla;
 
+use DateTime;
 use Fliglio\Web\MappableApi;
 use PhpAmqpLib\Connection\AMQPConnection;
 use PhpAmqpLib\Message\AMQPMessage;
@@ -20,18 +21,32 @@ class RPCPublisher {
 		return $this->amqpMsg;
 	}
 
-	public function publish(MappableApi $api, $queueName, array $filters = []) {
+
+	/**
+	 * @param MappableApi $api
+	 * @param $queueName
+	 * @param Filter[] $filters
+	 * @return RPCPublisher
+	 */
+	public function publish(MappableApi $api, $queueName, $filters = []) {
 		$worker = new WorkerPublisher($this->connection, $queueName);
 
 		foreach ($filters as $filter) {
 			$worker->addFilter($filter);
 		}
+
 		return new self($this->connection, $worker->publish($api, [
 			'reply_to' => $queueName .'.reply',
 		]));
 	}
 
-	public function publishReply(Message $msg, MappableApi $api) {
+	/**
+	 * @param Message $msg
+	 * @param MappableApi $api
+	 * @param Filter[] $filters
+	 * @return null|AMQPMessage
+	 */
+	public function publishReply(Message $msg, MappableApi $api, $filters = []) {
 		if (!$msg->getReplyTo()) {
 			return null;
 		}
@@ -39,6 +54,10 @@ class RPCPublisher {
 		$queueName = $msg->getReplyTo();
 
 		$worker = new WorkerPublisher($this->connection, $queueName);
+
+		foreach ($filters as $filter) {
+			$worker->addFilter($filter);
+		}
 
 		return $worker->publish($api, [
 			'expiration' => ['T', strtotime('+5 minutes')],
@@ -63,13 +82,15 @@ class RPCPublisher {
 				throw new TimeoutException(sprintf("Timeout of '%s' exceeded", $timeout));
 			}
 
+			/** @var \PhpAmqpLib\Message\AMQPMessage $msg */
 			$msg = $worker->consumeOne($queueName);
 
 			if (is_null($msg)) {
 				usleep(250000); // 125000 1/8s, 250000 1/4s
 
 			} else {
-				if ($msg && $msg->has('expiration') && $msg->has('expiration') < time()) {
+
+				if ($msg && $this->hasMessageExpired($msg)) {
 					$worker->ack($msg);
 
 				} else if ($msg->has('message_id') && $msg->get('message_id') == $msgId) {
@@ -79,6 +100,12 @@ class RPCPublisher {
 			}
 
 		} while (true);
+	}
+
+	private function hasMessageExpired($msg) {
+		$appHeaders = $msg->get('application_headers')->getNativeData();
+		return array_key_exists('expiration', $appHeaders)
+			&& $appHeaders['expiration']->getTimestamp() < (new DateTime())->getTimestamp();
 	}
 
 }

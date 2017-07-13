@@ -2,6 +2,8 @@
 
 namespace Fliglio\Chinchilla;
 
+use Fliglio\Chinchilla\Test\Md5Filter;
+use Fliglio\Chinchilla\Test\StrRevFilter;
 use Fliglio\Chinchilla\Test\TestUser;
 use Fliglio\Chinchilla\Test\WorkerTestHelper;
 use PhpAmqpLib\Connection\AMQPConnection;
@@ -33,23 +35,23 @@ class WorkerPublisherTest extends \PHPUnit_Framework_TestCase {
 
 		$this->assertEquals(count($msgs), 3);
 	}
-	
-	public function testPublish_shouldUseFilters() {
+
+	public function testPublish_canUseFilter() {
 		// given
 		$jsonEncodedUser = json_encode(TestUser::getApiMapper()->marshal(new TestUser()));
-		
+
 		// when
 		$this->publisher->publish(new TestUser);
 		$this->publisher->publish(new TestUser);
-		
+
 		$this->publisher->addFilter(new Md5Filter());
 		$this->publisher->publish(new TestUser);
 
-		// then 
+		// then
 		$msgs = $this->testHelper->getMessages();
 
 		$this->assertEquals(count($msgs), 3);
-		
+
 		$filtered = array_pop($msgs);
 		$this->assertEquals(md5($jsonEncodedUser), $filtered);
 
@@ -57,11 +59,32 @@ class WorkerPublisherTest extends \PHPUnit_Framework_TestCase {
 			$this->assertEquals($jsonEncodedUser, $msg);
 		}
 	}
-}
+	
+	public function testPublish_canUseFilters() {
+		// given
+		$jsonEncodedUser = json_encode(TestUser::getApiMapper()->marshal(new TestUser()));
+		
+		// when
+		$this->publisher->publish(new TestUser);
 
-class Md5Filter implements Filter {
+		$this->publisher->addFilter(new Md5Filter);
+		$this->publisher->publish(new TestUser);
 
-	public function apply($str) {
-		return md5($str);
+		$this->publisher->addFilter(new StrRevFilter);
+		$this->publisher->publish(new TestUser);
+
+		// then 
+		$msgs = $this->testHelper->getMessages();
+
+		$this->assertEquals(count($msgs), 3);
+		
+		$strrev = array_pop($msgs);
+		$md5 = array_pop($msgs);
+		$unfiltered = array_pop($msgs);
+
+		$this->assertEquals(strrev(md5($jsonEncodedUser)), $strrev);
+		$this->assertEquals(md5($jsonEncodedUser), $md5);
+		$this->assertEquals($jsonEncodedUser, $unfiltered);
+		
 	}
 }
