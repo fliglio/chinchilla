@@ -10,10 +10,24 @@ abstract class Publisher {
 
 	protected $connection;
 	protected $channel;
+	/** @var Filter[] */
+	protected $filters = [];
 
-	public function __construct(AMQPConnection $connection) {
+	/**
+	 * Publisher constructor.
+	 * @param AMQPConnection $connection
+	 * @param Filter[] $filters
+	 */
+	public function __construct(AMQPConnection $connection, $filters = []) {
 		$this->connection = $connection;
 		$this->channel    = $connection->channel();
+		foreach ($filters as $filter) {
+			$this->addFilter($filter);
+		}
+	}
+
+	public function addFilter(Filter $filter) {
+		$this->filters[] = $filter;
 	}
 
 	protected function toAMQPMessage(MappableApi $api, $headers = [], $msgId = null) {
@@ -23,8 +37,14 @@ abstract class Publisher {
 
 		$vo = $apiClassName::getApiMapper()->marshal($api);
 
+		$body = json_encode($vo);
+
+		foreach ($this->filters as $filter) {
+			$body = $filter->apply($body);
+		}
+
 		$amqpHeaders = [
-			'content_type'        => 'application/json', 
+			'content_type'        => 'application/json',
 			'message_id'          => !is_null($msgId) ? $msgId : uniqid(),
 			'reply_to'            => isset($headers['reply_to']) ? $headers['reply_to'] : null,
 			'message-ttl'         => isset($headers['expiration']) ? $headers['expiration'] : null,
@@ -32,7 +52,7 @@ abstract class Publisher {
 			'application_headers' => $headers
 		];
 
-		return new AMQPMessage(json_encode($vo), $amqpHeaders);
+		return new AMQPMessage($body, $amqpHeaders);
 	}
 
 	public function consumeOne($queueName) {

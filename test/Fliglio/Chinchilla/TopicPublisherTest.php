@@ -8,6 +8,12 @@ use PhpAmqpLib\Connection\AMQPConnection;
 
 class TopicPublisherTest extends \PHPUnit_Framework_TestCase {
 
+	/** @var TopicPublisher */
+	private $publisher;
+
+	/** @var TopicTestHelper */
+	private $testHelper;
+
 	public function setup() {
 		$conn = new AMQPConnection('localhost', '5672', 'guest', 'guest');
 
