@@ -7,11 +7,19 @@ foreach (array(__DIR__ . '/../../autoload.php', __DIR__ . '/vendor/autoload.php'
 	}
 }
 
-$addr = getenv('CONSUL_PORT_8500_TCP_ADDR');
+$addr = false;
+
+if (getenv('CONSUL_PORT_8500_TCP_ADDR')) {
+	$addr = sprintf("http://%s:8500", getenv('CONSUL_PORT_8500_TCP_ADDR'));
+}
+
+if (getenv('CONSUL_HTTP_ADDR')) {
+	$addr = getenv('CONSUL_HTTP_ADDR');
+}
 
 $options = [];
 if ($addr) {
-	$options['base_url'] = sprintf("http://%s:8500", $addr);
+	$options['base_url'] = $addr;
 }
 
 
