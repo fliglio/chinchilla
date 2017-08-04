@@ -16,7 +16,7 @@
 		"fliglio/web"               : "dev-master",
 		"fliglio/routing"           : "dev-master",
 		"fliglio/flfc"              : "dev-master",
-		"sensiolabs/consul-php-sdk" : "1.*",
+		"sensiolabs/consul-php-sdk" : "3.*",
 		"symfony/Yaml"              : "2.*",
 		"php-amqplib/php-amqplib"   : "2.6.2"
 	},
