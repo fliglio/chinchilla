@@ -17,7 +17,14 @@ class Application {
 		if (is_file($configPath)) {
 			$this->config = Yaml::parse(file_get_contents($configPath));
 
-			$sf = new consul\ServiceFactory($options);
+			$sf = null;
+			if (getenv("CONSUL_HTTP_ADDR")) {
+				$options['base_url'] = getenv("CONSUL_HTTP_ADDR");
+				$sf = new consul\ServiceFactory($options, null, new GuzzleClient($options));
+			} else {
+				$sf = new consul\ServiceFactory($options);
+			}
+			
 			$this->kv = $sf->get('kv');
 		}
 	}
@@ -60,7 +67,7 @@ class Application {
 
 	private function register($config) {
 		$name = $config['name'].'.yml';
-		$yml = (new Dumper())->dump($config, 2); // indent level 2 is standard yml format 
+		$yml = (new Dumper())->dump($config, 2); // indent level 2 is standard yml format
 
 		$this->kv->put(self::KV_PATH.$name, $yml);
 
