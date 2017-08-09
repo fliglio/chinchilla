@@ -20,11 +20,11 @@ class Application {
 			$sf = null;
 			if (getenv("CONSUL_HTTP_ADDR")) {
 				$options['base_url'] = getenv("CONSUL_HTTP_ADDR");
-				$sf = new consul\ServiceFactory($options, null, new GuzzleClient($options));
+				$sf = new consul\ServiceFactory($options, null, new \GuzzleHttp\Client($options));
 			} else {
 				$sf = new consul\ServiceFactory($options);
 			}
-			
+
 			$this->kv = $sf->get('kv');
 		}
 	}
