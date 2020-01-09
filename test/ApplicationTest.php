@@ -3,12 +3,13 @@
 namespace Fliglio\Chinchilla;
 
 use Symfony\Component\Yaml\Yaml;
+use SensioLabs\Consul\ServiceFactory;
 
 // requires consul to be running
 class ApplicationTest extends \PHPUnit_Framework_TestCase {
 
 	public function setup() {
-		$sf = new \SensioLabs\Consul\ServiceFactory();
+		$sf = new ServiceFactory();
 		$this->kv = $sf->get('kv');
 	}
 

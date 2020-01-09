@@ -1,6 +1,6 @@
 <?php
 
-namespace Fliglio\Chinchilla\Test;
+namespace Fliglio\Chinchilla\Helper;
 
 use Fliglio\Web\MappableApi;
 use Fliglio\Web\MappableApiTrait;

@@ -66,7 +66,7 @@ class RPCPublisher {
 	// Polls a queue looking for message with a specific ID
 	public function getReply($timeout = 60) {
 		if (!$this->amqpMsg) {
-			throw new Exception('AMQP message required to get reply');
+			throw new \Exception('AMQP message required to get reply');
 		}
 
 		$msgId = $this->amqpMsg->get('message_id');

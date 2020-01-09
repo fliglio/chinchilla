@@ -2,8 +2,8 @@
 
 namespace Fliglio\Chinchilla;
 
-use Fliglio\Chinchilla\Test\TestUser;
-use Fliglio\Chinchilla\Test\TopicTestHelper;
+use Fliglio\Chinchilla\Helper\TestUser;
+use Fliglio\Chinchilla\Helper\TopicTestHelper;
 use PhpAmqpLib\Connection\AMQPConnection;
 
 class TopicPublisherTest extends \PHPUnit_Framework_TestCase {

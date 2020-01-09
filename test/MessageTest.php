@@ -27,4 +27,15 @@ class MessageTest extends \PHPUnit_Framework_TestCase {
 		$this->assertEquals($msg->getHeader('custom-header'), 'foo');
 	}
 
+	public function testGetClass() {
+		// given
+		$injectable = new MessageInjectableFactory();
+
+		// when
+		$class = $injectable->getClassName();
+
+		// then
+		$this->assertEquals("Fliglio\Chinchilla\Message", $class);
+	}
+
 }
