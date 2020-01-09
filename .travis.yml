@@ -20,6 +20,6 @@ before_script:
     - ./consul --version
 
 script:
-    - ./consul agent -dev -bind=127.0.0.1 -server -bootstrap-expect 1 -data-dir /tmp/consul &
+    - ./consul agent -bind=127.0.0.1 -server -bootstrap-expect 1 -data-dir /tmp/consul &
     - sleep 5
     - ./vendor/bin/phpunit -v -c phpunit.xml
