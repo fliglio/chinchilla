@@ -47,8 +47,8 @@ abstract class Publisher {
 		$amqpHeaders = [
 			'content_type'        => 'application/json',
 			'message_id'          => !is_null($msgId) ? $msgId : uniqid(),
-			'reply_to'            => isset($headers['reply_to']) ? $headers['reply_to'] : '',
-			'message-ttl'         => isset($headers['expiration']) ? $headers['expiration'] : '',
+			'reply_to'            => isset($headers['reply_to']) ? $headers['reply_to'] : null,
+			'message-ttl'         => isset($headers['expiration']) ? $headers['expiration'] : null,
 			'delivery_mode'       => 2, // persistent : 2, non-persistent : 1
 		];
 		$message = new AMQPMessage($body, $amqpHeaders);
