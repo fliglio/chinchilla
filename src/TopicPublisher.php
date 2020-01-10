@@ -16,7 +16,7 @@ class TopicPublisher extends Publisher {
 
 		$this->channel->exchange_declare(
 			$this->exchangeName,
-			$type = 'topic',
+			'topic', // type
 			$passive,
 			$durable,
 			$auto_delete
@@ -30,7 +30,7 @@ class TopicPublisher extends Publisher {
 			$msg, 
 			$this->exchangeName, 
 			$routingKey, 
-			$mandatory=true
+			true // mandatory
 		);
 
 		return $msg;
