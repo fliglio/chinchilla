@@ -69,8 +69,10 @@ class RPCPublisher {
 			throw new \Exception('AMQP message required to get reply');
 		}
 
-		$msgId = $this->amqpMsg->get('message_id');
-		$queueName = $this->amqpMsg->get('application_headers')['reply_to'];
+		$headers = $this->amqpMsg->get('application_headers')->getNativeData();
+
+		$msgId     = $this->amqpMsg->get('message_id');
+		$queueName = $headers['reply_to'];
 
 		$worker = new WorkerPublisher($this->connection, $queueName);
 
@@ -103,8 +105,9 @@ class RPCPublisher {
 
 	private function hasMessageExpired($msg) {
 		$appHeaders = $msg->get('application_headers')->getNativeData();
+
 		return array_key_exists('expiration', $appHeaders)
-			&& $appHeaders['expiration']->getTimestamp() < time();
+			&& $appHeaders['expiration'] < time();
 	}
 
 }

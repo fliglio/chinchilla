@@ -40,10 +40,12 @@ class RPCPublisherTest extends \PHPUnit_Framework_TestCase {
 		$rpcWorker = $this->rpcWorker->publish(new TestUser, $this->queueName);
 		$msgA = $rpcWorker->getAmqpMsg();
 
+		$headers = $msgA->get('application_headers')->getNativeData();
+
 		// stub out injectable
 		$messageInjectable = (new Message())->setHeaders([
 			'x-message-id' => $msgA->get('message_id'),
-			'x-reply-to'   => $msgA->get('application_headers')['reply_to']
+			'x-reply-to'   => $headers['reply_to']
 		]);
 
 		// when
@@ -93,10 +95,12 @@ class RPCPublisherTest extends \PHPUnit_Framework_TestCase {
 		$rpcWorker = $this->rpcWorker->publish(new TestUser, $this->queueName);
 		$msgA = $rpcWorker->getAmqpMsg();
 
+		$headers = $msgA->get('application_headers')->getNativeData();
+
 		// stub out injectable
 		$messageInjectable = (new Message())->setHeaders([
 			'x-message-id' => $msgA->get('message_id'),
-			'x-reply-to'   => $msgA->get('application_headers')['reply_to']
+			'x-reply-to'   => $headers['reply_to']
 		]);
 
 		// when
@@ -128,11 +132,13 @@ class RPCPublisherTest extends \PHPUnit_Framework_TestCase {
 		$rpcWorker = $this->rpcWorker->publish(new TestUser, $this->queueName);
 		$msgA = $rpcWorker->getAmqpMsg();
 		
+		$headers = $msgA->get('application_headers')->getNativeData();
+
 		// put 100 replies on the channel, with the last one having the correct msg id
 		for ($i=0; $i < 100; $i++) { 
 			$messageInjectable = (new Message())->setHeaders([
 				'x-message-id' => uniqid(),
-				'x-reply-to'   => $msgA->get('application_headers')['reply_to']
+				'x-reply-to'   => $headers['reply_to']
 			]);
 			$this->rpcWorker->publishReply($messageInjectable, new TestUserReply);
 		}
@@ -140,7 +146,7 @@ class RPCPublisherTest extends \PHPUnit_Framework_TestCase {
 		// correct reply
 		$messageInjectable = (new Message())->setHeaders([
 			'x-message-id' => $msgA->get('message_id'),
-			'x-reply-to'   => $msgA->get('application_headers')['reply_to']
+			'x-reply-to'   => $headers['reply_to']
 		]);
 
 		// when
