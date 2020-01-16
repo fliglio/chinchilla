@@ -1,8 +1,6 @@
 <?php
 
-
-namespace Fliglio\Chinchilla\Test;
-
+namespace Fliglio\Chinchilla\Helper;
 
 use Fliglio\Chinchilla\Filter;
 

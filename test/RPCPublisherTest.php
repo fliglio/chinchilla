@@ -2,9 +2,9 @@
 
 namespace Fliglio\Chinchilla;
 
-use Fliglio\Chinchilla\Test\Md5Filter;
-use Fliglio\Chinchilla\Test\TestUser;
-use Fliglio\Chinchilla\Test\TestUserReply;
+use Fliglio\Chinchilla\Helper\Md5Filter;
+use Fliglio\Chinchilla\Helper\TestUser;
+use Fliglio\Chinchilla\Helper\TestUserReply;
 use PhpAmqpLib\Connection\AMQPConnection;
 
 class RPCPublisherTest extends \PHPUnit_Framework_TestCase {
@@ -40,10 +40,12 @@ class RPCPublisherTest extends \PHPUnit_Framework_TestCase {
 		$rpcWorker = $this->rpcWorker->publish(new TestUser, $this->queueName);
 		$msgA = $rpcWorker->getAmqpMsg();
 
+		$headers = $msgA->get('application_headers')->getNativeData();
+
 		// stub out injectable
 		$messageInjectable = (new Message())->setHeaders([
 			'x-message-id' => $msgA->get('message_id'),
-			'x-reply-to'   => $msgA->get('application_headers')['reply_to']
+			'x-reply-to'   => $headers['reply_to']
 		]);
 
 		// when
@@ -54,6 +56,25 @@ class RPCPublisherTest extends \PHPUnit_Framework_TestCase {
 		// then 
 		$this->assertEquals($msgA->get('message_id'), $msgB->get('message_id'));
 		$this->assertEquals(json_encode((new TestUserReply)->marshal()), $msgB->body);
+	}
+
+	public function testConsumeReply_withNoReplyToMessage() {
+		// given
+		$this->rpcWorker->publish(new TestUser, $this->queueName);
+		$this->rpcWorker->publish(new TestUser, $this->queueName);
+		$rpcWorker = $this->rpcWorker->publish(new TestUser, $this->queueName);
+		$msgA = $rpcWorker->getAmqpMsg();
+
+		// stub out injectable
+		$messageInjectable = (new Message())->setHeaders([
+			'x-message-id' => $msgA->get('message_id')
+		]);
+
+		// when
+		$resp = $this->rpcWorker->publishReply($messageInjectable, new TestUserReply);
+
+		// then 
+		$this->assertNull($resp);
 	}
 
 	public function testPublish_canUseFilters() {
@@ -74,20 +95,34 @@ class RPCPublisherTest extends \PHPUnit_Framework_TestCase {
 		$rpcWorker = $this->rpcWorker->publish(new TestUser, $this->queueName);
 		$msgA = $rpcWorker->getAmqpMsg();
 
+		$headers = $msgA->get('application_headers')->getNativeData();
+
 		// stub out injectable
 		$messageInjectable = (new Message())->setHeaders([
 			'x-message-id' => $msgA->get('message_id'),
-			'x-reply-to'   => $msgA->get('application_headers')['reply_to']
+			'x-reply-to'   => $headers['reply_to']
 		]);
 
 		// when
-		$this->rpcWorker->publishReply($messageInjectable, $uReply = new TestUserReply, [new Md5Filter]);
+		$this->rpcWorker->publishReply($messageInjectable, new TestUserReply, [new Md5Filter]);
 
 		$msgB = $rpcWorker->getReply(5);
 
 		// then
 		$this->assertEquals($msgA->get('message_id'), $msgB->get('message_id'));
 		$this->assertEquals(md5(json_encode((new TestUserReply)->marshal())), $msgB->body);
+	}
+
+	/** @expectedException \Exception */
+	public function testGetReply_whenNoMessage() {
+		// given
+		$publisher = new RPCPublisher($this->conn);
+		
+		// when
+		$publisher->getReply(1);
+
+		// then
+		$this->assertTrue(false);
 	}
 
 	public function testConsumeReply_MultipleMessages() {
@@ -97,11 +132,13 @@ class RPCPublisherTest extends \PHPUnit_Framework_TestCase {
 		$rpcWorker = $this->rpcWorker->publish(new TestUser, $this->queueName);
 		$msgA = $rpcWorker->getAmqpMsg();
 		
+		$headers = $msgA->get('application_headers')->getNativeData();
+
 		// put 100 replies on the channel, with the last one having the correct msg id
 		for ($i=0; $i < 100; $i++) { 
 			$messageInjectable = (new Message())->setHeaders([
 				'x-message-id' => uniqid(),
-				'x-reply-to'   => $msgA->get('application_headers')['reply_to']
+				'x-reply-to'   => $headers['reply_to']
 			]);
 			$this->rpcWorker->publishReply($messageInjectable, new TestUserReply);
 		}
@@ -109,7 +146,7 @@ class RPCPublisherTest extends \PHPUnit_Framework_TestCase {
 		// correct reply
 		$messageInjectable = (new Message())->setHeaders([
 			'x-message-id' => $msgA->get('message_id'),
-			'x-reply-to'   => $msgA->get('application_headers')['reply_to']
+			'x-reply-to'   => $headers['reply_to']
 		]);
 
 		// when

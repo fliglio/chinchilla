@@ -22,6 +22,5 @@ if ($addr) {
 	$options['base_url'] = $addr;
 }
 
-
 $app = new Fliglio\Chinchilla\Application(__DIR__ . '/../../../chinchilla.yml', $options);
 print($app->run());

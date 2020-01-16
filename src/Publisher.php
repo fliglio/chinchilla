@@ -5,6 +5,7 @@ namespace Fliglio\Chinchilla;
 use Fliglio\Web\MappableApi;
 use PhpAmqpLib\Connection\AMQPConnection;
 use PhpAmqpLib\Message\AMQPMessage;
+use PhpAmqpLib\Wire\AMQPTable;
 
 abstract class Publisher {
 
@@ -33,7 +34,7 @@ abstract class Publisher {
 	protected function toAMQPMessage(MappableApi $api, $headers = [], $msgId = null) {
 		$apiClassName = get_class($api);
 
-		$headers['created'] = ['T', time()];
+		$headers['created'] = time();
 
 		$vo = $apiClassName::getApiMapper()->marshal($api);
 
@@ -49,10 +50,11 @@ abstract class Publisher {
 			'reply_to'            => isset($headers['reply_to']) ? $headers['reply_to'] : null,
 			'message-ttl'         => isset($headers['expiration']) ? $headers['expiration'] : null,
 			'delivery_mode'       => 2, // persistent : 2, non-persistent : 1
-			'application_headers' => $headers
 		];
+		$message = new AMQPMessage($body, $amqpHeaders);
+		$message->set('application_headers', new AMQPTable($headers));
 
-		return new AMQPMessage($body, $amqpHeaders);
+		return $message;
 	}
 
 	public function consumeOne($queueName) {

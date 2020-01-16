@@ -3,17 +3,20 @@
 namespace Fliglio\Chinchilla;
 
 use Symfony\Component\Yaml\Yaml;
+use SensioLabs\Consul\ServiceFactory;
 
 // requires consul to be running
 class ApplicationTest extends \PHPUnit_Framework_TestCase {
 
+	private $kv;
+
 	public function setup() {
-		$sf = new \SensioLabs\Consul\ServiceFactory();
+		$sf = new ServiceFactory();
 		$this->kv = $sf->get('kv');
 	}
 
 	public function teardown() {
-		$this->kv->delete(Application::KV_PATH.'/test-endpoint.yml');
+		$this->kv->delete(Application::KV_PATH . '/test-endpoint.yml');
 		$this->kv->delete(Application::KV_PATH . '/foo-bar-endpoint.yml');
 		$this->kv->delete(Application::KV_PATH . '/foo-baz-endpoint.yml');
 	}

@@ -2,10 +2,10 @@
 
 namespace Fliglio\Chinchilla;
 
-use Fliglio\Chinchilla\Test\Md5Filter;
-use Fliglio\Chinchilla\Test\StrRevFilter;
-use Fliglio\Chinchilla\Test\TestUser;
-use Fliglio\Chinchilla\Test\WorkerTestHelper;
+use Fliglio\Chinchilla\Helper\Md5Filter;
+use Fliglio\Chinchilla\Helper\StrRevFilter;
+use Fliglio\Chinchilla\Helper\TestUser;
+use Fliglio\Chinchilla\Helper\WorkerTestHelper;
 use PhpAmqpLib\Connection\AMQPConnection;
 
 class WorkerPublisherTest extends \PHPUnit_Framework_TestCase {
