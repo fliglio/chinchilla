@@ -17,11 +17,11 @@
 		"fliglio/routing"           : "dev-master",
 		"fliglio/flfc"              : "dev-master",
 		"sensiolabs/consul-php-sdk" : "1.*",
-		"symfony/Yaml"              : "2.*",
+		"symfony/Yaml"              : "3.4.*",
 		"php-amqplib/php-amqplib"   : "2.6.2"
 	},
 	"require-dev": {
-		"phpunit/phpunit"           : "5.7.*"
+		"phpunit/phpunit"           : "5.*"
 	},
 	"autoload": {
 		"psr-4": {
