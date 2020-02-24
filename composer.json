@@ -13,9 +13,9 @@
 	"minimum-stability": "dev",
 	"require": {
 		"php"                       : ">=5.6",
-		"fliglio/web"               : "dev-master",
-		"fliglio/routing"           : "dev-master",
-		"fliglio/flfc"              : "dev-master",
+		"fliglio/web"               : "2.3.*",
+		"fliglio/routing"           : "2.3.*",
+		"fliglio/flfc"              : "2.3.*",
 		"sensiolabs/consul-php-sdk" : "1.*",
 		"symfony/yaml"              : "3.4.*",
 		"php-amqplib/php-amqplib"   : "2.6.2"
