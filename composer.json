@@ -17,7 +17,7 @@
 		"fliglio/routing"           : "dev-master",
 		"fliglio/flfc"              : "dev-master",
 		"sensiolabs/consul-php-sdk" : "1.*",
-		"symfony/Yaml"              : "3.4.*",
+		"symfony/yaml"              : "3.4.*",
 		"php-amqplib/php-amqplib"   : "2.6.2"
 	},
 	"require-dev": {
