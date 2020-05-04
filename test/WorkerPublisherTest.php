@@ -33,7 +33,7 @@ class WorkerPublisherTest extends \PHPUnit_Framework_TestCase {
 		// then 
 		$msgs = $this->testHelper->getMessages();
 
-		$this->assertEquals(count($msgs), 3);
+		$this->assertEquals(3, count($msgs));
 	}
 
 	public function testPublish_canUseFilter() {
@@ -50,7 +50,7 @@ class WorkerPublisherTest extends \PHPUnit_Framework_TestCase {
 		// then
 		$msgs = $this->testHelper->getMessages();
 
-		$this->assertEquals(count($msgs), 3);
+		$this->assertEquals(3, count($msgs));
 
 		$filtered = array_pop($msgs);
 		$this->assertEquals(md5($jsonEncodedUser), $filtered);
@@ -76,7 +76,7 @@ class WorkerPublisherTest extends \PHPUnit_Framework_TestCase {
 		// then 
 		$msgs = $this->testHelper->getMessages();
 
-		$this->assertEquals(count($msgs), 3);
+		$this->assertEquals(3, count($msgs));
 		
 		$strrev = array_pop($msgs);
 		$md5 = array_pop($msgs);

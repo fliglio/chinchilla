@@ -45,7 +45,7 @@ class TopicPublisherTest extends \PHPUnit_Framework_TestCase {
 		// then 
 		$msgs = $this->testHelper->getMessages('test.sandbox.*');
 
-		$this->assertEquals(count($msgs), 3);
+		$this->assertEquals(3, count($msgs));
 	}
 
 	public function testPublish_NoSubscriber() {
@@ -58,7 +58,7 @@ class TopicPublisherTest extends \PHPUnit_Framework_TestCase {
 		// then
 		$msgs = $this->testHelper->getMessages('test.sandbox.add');
 
-		$this->assertEquals(count($msgs), 0);
+		$this->assertEquals(0, count($msgs));
 	}
 
 	public function testPublish_DirectSubscriber() {
@@ -71,7 +71,7 @@ class TopicPublisherTest extends \PHPUnit_Framework_TestCase {
 		// then
 		$msgs = $this->testHelper->getMessages('test.sandbox.update');
 
-		$this->assertEquals(count($msgs), 1);
+		$this->assertEquals(1, count($msgs));
 	}
 
 }
