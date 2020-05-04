@@ -27,6 +27,7 @@ class TopicPublisherTest extends \PHPUnit_Framework_TestCase {
 		$this->testHelper->createQueue('test.sandbox.*');
 
 		// when
+		sleep(1);
 		$msg = $this->publisher->publish(new TestUser, 'test.sandbox.update');
 
 		// then 
@@ -43,6 +44,7 @@ class TopicPublisherTest extends \PHPUnit_Framework_TestCase {
 		$this->publisher->publish(new TestUser, 'test.sandbox.update');
 
 		// then 
+		sleep(1);
 		$msgs = $this->testHelper->getMessages('test.sandbox.*');
 
 		$this->assertEquals(3, count($msgs));
@@ -56,6 +58,7 @@ class TopicPublisherTest extends \PHPUnit_Framework_TestCase {
 		$this->publisher->publish(new TestUser, 'test.sandbox.update');
 
 		// then
+		sleep(1);
 		$msgs = $this->testHelper->getMessages('test.sandbox.add');
 
 		$this->assertEquals(0, count($msgs));
@@ -69,6 +72,7 @@ class TopicPublisherTest extends \PHPUnit_Framework_TestCase {
 		$this->publisher->publish(new TestUser, 'test.sandbox.update');
 
 		// then
+		sleep(1);
 		$msgs = $this->testHelper->getMessages('test.sandbox.update');
 
 		$this->assertEquals(1, count($msgs));
