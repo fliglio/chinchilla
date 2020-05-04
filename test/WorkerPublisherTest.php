@@ -16,7 +16,7 @@ class WorkerPublisherTest extends \PHPUnit_Framework_TestCase {
 	/** @var  WorkerPublisher */
 	private $publisher;
 	
-	public function setup() {
+	public function setUp() {
 		$conn = new AMQPConnection('localhost', '5672', 'guest', 'guest');
 
 		$this->testHelper = new WorkerTestHelper($conn, 'test.sandbox.workertest');
