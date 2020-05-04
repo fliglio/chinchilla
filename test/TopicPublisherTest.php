@@ -14,7 +14,7 @@ class TopicPublisherTest extends \PHPUnit_Framework_TestCase {
 	/** @var TopicTestHelper */
 	private $testHelper;
 
-	public function setup() {
+	public function setUp() {
 		$conn = new AMQPConnection('localhost', '5672', 'guest', 'guest');
 
 		$this->testHelper = new TopicTestHelper($conn);
