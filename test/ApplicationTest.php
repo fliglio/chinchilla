@@ -10,12 +10,12 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase {
 
 	private $kv;
 
-	public function setup() {
+	public function setUp() {
 		$sf = new ServiceFactory();
 		$this->kv = $sf->get('kv');
 	}
 
-	public function teardown() {
+	public function tearDown() {
 		$this->kv->delete(Application::KV_PATH . '/test-endpoint.yml');
 		$this->kv->delete(Application::KV_PATH . '/foo-bar-endpoint.yml');
 		$this->kv->delete(Application::KV_PATH . '/foo-baz-endpoint.yml');

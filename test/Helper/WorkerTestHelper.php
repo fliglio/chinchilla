@@ -30,7 +30,7 @@ class WorkerTestHelper extends TestHelper {
 		return $msgs;
 	}
 
-	public function teardown() {
+	public function tearDown() {
 		$this->channel->queue_delete($this->queueName, false, false, true);
 	}
 

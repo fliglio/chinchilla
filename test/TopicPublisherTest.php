@@ -14,7 +14,7 @@ class TopicPublisherTest extends \PHPUnit_Framework_TestCase {
 	/** @var TopicTestHelper */
 	private $testHelper;
 
-	public function setup() {
+	public function setUp() {
 		$conn = new AMQPConnection('localhost', '5672', 'guest', 'guest');
 
 		$this->testHelper = new TopicTestHelper($conn);
@@ -27,6 +27,7 @@ class TopicPublisherTest extends \PHPUnit_Framework_TestCase {
 		$this->testHelper->createQueue('test.sandbox.*');
 
 		// when
+		sleep(1);
 		$msg = $this->publisher->publish(new TestUser, 'test.sandbox.update');
 
 		// then 
@@ -43,9 +44,10 @@ class TopicPublisherTest extends \PHPUnit_Framework_TestCase {
 		$this->publisher->publish(new TestUser, 'test.sandbox.update');
 
 		// then 
+		sleep(1);
 		$msgs = $this->testHelper->getMessages('test.sandbox.*');
 
-		$this->assertEquals(count($msgs), 3);
+		$this->assertEquals(3, count($msgs));
 	}
 
 	public function testPublish_NoSubscriber() {
@@ -56,9 +58,10 @@ class TopicPublisherTest extends \PHPUnit_Framework_TestCase {
 		$this->publisher->publish(new TestUser, 'test.sandbox.update');
 
 		// then
+		sleep(1);
 		$msgs = $this->testHelper->getMessages('test.sandbox.add');
 
-		$this->assertEquals(count($msgs), 0);
+		$this->assertEquals(0, count($msgs));
 	}
 
 	public function testPublish_DirectSubscriber() {
@@ -69,9 +72,10 @@ class TopicPublisherTest extends \PHPUnit_Framework_TestCase {
 		$this->publisher->publish(new TestUser, 'test.sandbox.update');
 
 		// then
+		sleep(1);
 		$msgs = $this->testHelper->getMessages('test.sandbox.update');
 
-		$this->assertEquals(count($msgs), 1);
+		$this->assertEquals(1, count($msgs));
 	}
 
 }

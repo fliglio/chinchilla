@@ -44,7 +44,7 @@ class TopicTestHelper extends TestHelper {
 		return $msgs;
 	}
 
-	public function teardown() {
+	public function tearDown() {
 		foreach ($this->queues as $routingKey => $queueName) {
 			$this->channel->queue_unbind($queueName, $this->exchangeName, $routingKey);
 			$this->channel->queue_delete($queueName, false, false, true);
