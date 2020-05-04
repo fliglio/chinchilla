@@ -30,7 +30,8 @@ class WorkerPublisherTest extends \PHPUnit_Framework_TestCase {
 		$this->publisher->publish(new TestUser);
 		$this->publisher->publish(new TestUser);
 
-		// then 
+		// then
+		sleep(1);
 		$msgs = $this->testHelper->getMessages();
 
 		$this->assertEquals(3, count($msgs));
@@ -48,6 +49,7 @@ class WorkerPublisherTest extends \PHPUnit_Framework_TestCase {
 		$this->publisher->publish(new TestUser);
 
 		// then
+		sleep(1);
 		$msgs = $this->testHelper->getMessages();
 
 		$this->assertEquals(3, count($msgs));
@@ -74,6 +76,7 @@ class WorkerPublisherTest extends \PHPUnit_Framework_TestCase {
 		$this->publisher->publish(new TestUser);
 
 		// then 
+		sleep(1);
 		$msgs = $this->testHelper->getMessages();
 
 		$this->assertEquals(3, count($msgs));
