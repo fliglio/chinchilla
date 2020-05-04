@@ -15,7 +15,7 @@ class RPCPublisherTest extends \PHPUnit_Framework_TestCase {
 	/** @var  AMQPConnection */
 	private $conn;
 
-	public function setup() {
+	public function setUp() {
 		$this->conn = new AMQPConnection('localhost', '5672', 'guest', 'guest');
 
 		$this->queueName = 'test.sandbox.replypublisher';
